@@ -22,92 +22,26 @@
     <script src="https://unpkg.com/html5-qrcode" defer></script>
 
   <style>
-    /* Standaard stijlen (geschikt voor kleinere schermen/telefoons) */
-    html, body { 
-      margin: 0; 
-      padding: 0; 
-      width: 100%; 
-      height: 100%; 
-      font-family: Arial, sans-serif; 
-      background-color: #E5DCAF; 
-      overflow: visible; 
-      font-size: 16px; /* Basis fontgrootte */
-    }
-    #header { 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      gap: 15px; 
-      padding: 10px 0;
-    }
-    #header img { width: 15vw; max-width: 120px; height:auto; }
-    h1 { font-size: 1.8em; color:#643d24; margin:0; font-style:italic; }
-    #startBtn { padding: 0.5em 1em; background:#7a4b21;color:#fff;border-radius:10px;border:0; cursor:pointer; font-size: 1em; }
-    #container { 
-      display:flex; 
-      gap: 3vw; /* Relatieve afstand */
-      padding: 20px; 
-      height: calc(100% - 120px); 
-      box-sizing:border-box; 
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    /* Linker ingrediëntenlijst */
-    #ingredient-list { 
-      display:flex; 
-      flex-direction:column; 
-      gap: 10px; 
-      width: 25vw; /* Relatieve breedte */
-      max-width: 160px;
-      justify-content:center; 
-      font-size: 0.9em;
-    }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: Arial, sans-serif; background-color: #E5DCAF; overflow: visible; }
+    #header { display:flex; align-items:center; justify-content:center; gap:15px; margin-top:2px; }
+    #header img { width:120px; height:auto; }
+    h1 { font-size:2.2em; color:#643d24; margin:0; font-style:italic; }
+    #startBtn { padding:10px 20px; background:#7a4b21;color:#fff;border-radius:10px;border:0; cursor:pointer; }
+    #container { display:flex; gap:30px; padding:20px; height: calc(100% - 180px); box-sizing:border-box; }
+    #ingredient-list { display:flex; flex-direction:column; gap:10px; width:160px; justify-content:center; }
     .ingredient-small { display:flex; flex-direction:column; align-items:center; }
-    .ingredient-small img { 
-      width: 10vw; /* Relatieve breedte */
-      max-width: 80px; 
-      height:auto; 
-      transition:all .25s ease; 
-      border-radius:8px; 
-    }
+    .ingredient-small img { width:100px; height:auto; transition:all .25s ease; border-radius:8px; }
     .found-border { border:4px solid green; background:#e6ffe6; padding:2px; border-radius:12px; }
-
-    /* Centrale focus */
-    #current-ingredient { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 10px; }
-    #zoek-text { font-size: 1.2em; color:#5a381e; font-weight:bold; margin-bottom: 10px; display:none; }
-    #ingredient-image { 
-      width: 45vw; /* Relatieve breedte */
-      max-width: 300px; 
-      height:auto; 
-      margin-bottom: 15px; 
-      transition:transform .3s ease; 
-    }
-    #ingredient-text { font-size: 1.4em; font-weight:bold; margin-bottom: 20px; }
-    #reader { 
-      width: 70vw; /* Relatieve breedte */
-      max-width: 300px; /* Maximale breedte behouden */
-      margin: 0 auto; 
-    }
-
-    /* Video stijlen */
+    #current-ingredient { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    #zoek-text { font-size:1.4em; color:#5a381e; font-weight:bold; margin-bottom:10px; display:none; }
+    #ingredient-image { width:350px; max-height:50%; height:auto; margin-bottom:15px; transition:transform .3s ease; }
+    #ingredient-text { font-size:1.5em; font-weight:bold; margin-bottom:20px; }
+    #reader { width:300px; margin:0 auto; }
     #video-container { display:none; flex-direction:column; align-items:center; gap:10px; }
-    #video-container video { width: 60vw; max-width: 450px; border-radius:15px; }
+    #video-container video { width:480px; border-radius:15px; }
     #nextBtn { padding:10px 20px; background:#7a4b21;color:#fff;border-radius:10px;border:0; cursor:pointer; }
     #hint { font-size:.95em; color:#333; margin-top:6px; }
     #recept { max-width:800px; background:#fffbe6; padding:20px; border-radius:15px; margin:20px auto; box-shadow:0 0 10px rgba(0,0,0,.15); display:none; }
-
-    /* --- MEDIA QUERY: Specifiek voor Grotere Tablets (iPad Pro Landscape/Desktop) --- */
-    @media (min-width: 900px) {
-      body { font-size: 18px; } /* Basis fontgrootte iets verhogen */
-      #header img { width: 90px; }
-      h1 { font-size: 2em; }
-      #ingredient-list { width: 160px; font-size: 1em; }
-      .ingredient-small img { width: 90px; }
-      #ingredient-image { width: 350px; }
-      #reader { width: 350px; }
-    }
-
   </style>
 </head>
 <body>
@@ -116,7 +50,7 @@
     <h1>Knapperige Kabouterhapjes</h1>
     <div>
       <button id="startBtn">Start</button>
-      <div id="hint"></div>
+      <div id="hint">Klik op Start om de camera te gebruiken. (De pagina vraagt toestemming voor de camera.)</div>
     </div>
   </div>
 
@@ -389,4 +323,3 @@
   </script>
 </body>
 </html>
-
