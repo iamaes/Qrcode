@@ -42,6 +42,37 @@
     #nextBtn { padding:10px 20px; background:#7a4b21;color:#fff;border-radius:10px;border:0; cursor:pointer; }
     #hint { font-size:.95em; color:#333; margin-top:6px; }
     #recept { max-width:800px; background:#fffbe6; padding:20px; border-radius:15px; margin:20px auto; box-shadow:0 0 10px rgba(0,0,0,.15); display:none; }
+
+    /* --- iPad/Tablet Optimalisatie (min-width: 768px) --- */
+    @media (min-width: 768px) {
+      #header img { width: 80px; } /* Logo kleiner */
+      h1 { font-size: 1.8em; } /* Hoofdtitel kleiner */
+      
+      /* Layout container voor beter gebruik van ruimte */
+      #container {
+        max-width: 90%;
+        margin: 0 auto;
+        height: calc(100% - 120px); /* Meer ruimte voor de container */
+      }
+
+      /* Ingrediëntenlijst links kleiner */
+      #ingredient-list { 
+        width: 120px; 
+        font-size: 0.9em;
+      }
+      .ingredient-small img { 
+        width: 75px; 
+      }
+
+      /* Centraal deel kleiner */
+      #zoek-text { font-size: 1.2em; }
+      #ingredient-image { width: 250px; max-height: 40%; } /* Afbeelding verkleind */
+      #ingredient-text { font-size: 1.3em; }
+
+      /* QR Reader en Video kleiner */
+      #reader { width: 250px; }
+      #video-container video { width: 400px; }
+    }
   </style>
 </head>
 <body>
