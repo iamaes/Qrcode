@@ -31,10 +31,13 @@
             width: 20%;
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
+            /* AANPASSING 1: Minder ruimte door flex-start */
+            justify-content: flex-start; 
             align-items: center;
             padding: 10px 0;
             background-color: #E5DCAF;
+            /* Optioneel: scrollen toestaan als er meer items komen */
+            overflow-y: auto; 
         }
 
         .ingredient-item {
@@ -42,7 +45,8 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 5px;
+            /* AANPASSING 1: Padding verlaagd */
+            padding: 2px 5px; 
         }
 
         .ingredient-img {
@@ -136,68 +140,103 @@
             margin-bottom: 30px;
         }
 
-        /* 2. Style de container voor de QR-scanner-feed */
+        /* Style de container voor de QR-scanner-feed */
         #reader {
             width: 400px;
             height: 300px;
             border: 5px solid #ccc;
             border-radius: 10px;
-            /* html5-qrcode beheert de video-tag en spiegeling */
         }
 
-        /* Receptscherm (onveranderd) */
+        /* AANPASSING 2 & 3: Receptscherm */
         #recipe-screen {
             display: none;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             flex-grow: 1;
-            width: 80%;
-            max-width: 700px;
+            width: 100%; /* Maak volledige breedte van main-content */
             text-align: left;
+            padding: 0; /* Geen padding hier meer */
+            box-sizing: border-box;
+        }
+
+        /* Nieuwe container voor recept en video naast elkaar */
+        #recipe-content-wrapper {
+            display: flex;
+            width: 100%;
+            height: 80vh; /* Zodat het op het scherm past */
             margin-top: 20px;
-            padding: 20px;
             border: 2px solid #555;
             border-radius: 15px;
             background-color: white;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden; /* Houd alles binnen de randen */
+        }
+        
+        .recipe-left, .recipe-right {
+            padding: 15px;
+            box-sizing: border-box;
+            width: 50%;
+            overflow-y: auto; /* Zodat de inhoud kan scrollen indien nodig */
+            height: 100%;
+        }
+
+        .recipe-left {
+            border-right: 1px solid #ccc;
         }
 
         #recipe-screen h2 {
-            font-size: 2.5em;
+            font-size: 2em; /* Kleiner gemaakt */
             margin-bottom: 10px;
             color: #38763a;
             width: 100%;
             text-align: center;
+            padding: 5px 0;
+            margin-top: 0;
         }
 
         #recipe-screen h3 {
-            font-size: 1.8em;
-            margin-top: 20px;
+            font-size: 1.5em; /* Kleiner gemaakt */
+            margin-top: 10px;
             border-bottom: 2px solid #38763a;
-            padding-bottom: 5px;
+            padding-bottom: 3px;
+            margin-bottom: 5px;
         }
 
         #recipe-screen p, #recipe-screen li {
-            font-size: 1.4em;
-            line-height: 1.5;
-            margin-bottom: 10px;
+            font-size: 1em; /* Kleiner gemaakt */
+            line-height: 1.4;
+            margin-bottom: 5px;
         }
 
         #recipe-screen ul {
             list-style-type: none;
             padding-left: 0;
         }
-
-        #recipe-screen button {
-            margin-top: 30px;
-            padding: 15px 30px;
-            font-size: 1.5em;
+        
+        /* Video stijl */
+        .recipe-right video {
+            width: 100%;
+            height: auto;
+            max-height: 50vh; /* Beperk hoogte t.o.v. de container */
+            display: block;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        
+        /* Resetknop stijl in receptscherm */
+        #reset-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1.2em;
             cursor: pointer;
             background-color: #333;
             color: white;
             border: none;
             border-radius: 8px;
-            width: 100%;
+            width: 100%; /* Volledige breedte in de rechterhelft */
+            display: block;
+            text-align: center;
         }
 
         /* Confetti Effect (onveranderd) */
@@ -254,23 +293,33 @@
 
             <div id="recipe-screen">
                 <h2>Het Recept</h2>
-                <h3>Ingrediënten:</h3>
-                <ul>
-                    <li>250 g oesterzwammen</li>
-                    <li>2 eetlepels olijfolie</li>
-                    <li>1 takje rozemarijn</li>
-                    <li>1 takje tijm</li>
-                </ul>
-                <h3>Bereidingswijze:</h3>
-                <ol>
-                    <li>Maak de oesterzwammen schoon.</li>
-                    <li>Laat je kind voorzichtig ruiken aan de oesterzwammen (optioneel).</li>
-                    <li>Verhit de pan met olijfolie.</li>
-                    <li>Voeg de oesterzwammen toe en bak ze goudbruin.</li>
-                    <li>Voeg de kruiden toe en serveer.</li>
-                </ol>
-                <p style="font-size: 2em; text-align: center; width: 100%; color: #e74c3c;">**Smakelijk!**</p>
-                <button id="reset-button">Terug naar Start</button>
+                <div id="recipe-content-wrapper">
+                    <div class="recipe-left">
+                        <h3>Ingrediënten:</h3>
+                        <ul>
+                            <li>250 g oesterzwammen</li>
+                            <li>2 eetlepels olijfolie</li>
+                            <li>1 takje rozemarijn</li>
+                            <li>1 takje tijm</li>
+                        </ul>
+                        <h3>Bereidingswijze:</h3>
+                        <ol>
+                            <li>Maak de oesterzwammen schoon.</li>
+                            <li>Laat je kind voorzichtig ruiken aan de oesterzwammen (optioneel).</li>
+                            <li>Verhit de pan met olijfolie.</li>
+                            <li>Voeg de oesterzwammen toe en bak ze goudbruin.</li>
+                            <li>Voeg de kruiden toe en serveer.</li>
+                        </ol>
+                        <p style="font-size: 1.5em; text-align: center; width: 100%; color: #e74c3c; margin-top: 15px;">**Smakelijk!**</p>
+                    </div>
+                    
+                    <div class="recipe-right">
+                        <video id="recipe-video" src="Zwamzakken_lied.mp4" controls autoplay loop>
+                            Je browser ondersteunt de video tag niet.
+                        </video>
+                        <button id="reset-button">Opnieuw Beginnen</button>
+                    </div>
+                </div>
             </div>
             
             <div id="confetti-overlay"></div>
@@ -297,6 +346,7 @@
         const largeIngredientImg = document.getElementById('large-ingredient-img');
         const confettiOverlay = document.getElementById('confetti-overlay');
         const resetButton = document.getElementById('reset-button');
+        const recipeVideo = document.getElementById('recipe-video'); // Nieuwe referentie
         
         // Functie voor spraaksynthese
         function speak(text) {
@@ -353,6 +403,8 @@
         // Functie om de QR-scanner te stoppen
         function stopQrScanner() {
             if (qrCodeScanner && qrCodeScanner.isScanning) {
+                // Controleer of de scanner actief is voordat je probeert te stoppen
+                // Soms is deze al gestopt in ingredientFound, dus een check is nuttig
                 qrCodeScanner.stop().catch(err => console.error("Fout bij stoppen scanner: ", err));
             }
         }
@@ -363,6 +415,9 @@
             startScreen.style.display = 'none';
             recipeScreen.style.display = 'none';
             searchScreen.style.display = 'flex';
+            // Zorg ervoor dat de video stopt als je teruggaat naar zoeken
+            recipeVideo.pause(); 
+            recipeVideo.currentTime = 0; 
 
             const ingredient = ingredients[currentIngredientIndex];
 
@@ -414,6 +469,8 @@
             stopQrScanner();
             searchScreen.style.display = 'none';
             recipeScreen.style.display = 'flex';
+            // Start de video wanneer het receptscherm verschijnt
+            recipeVideo.play().catch(error => console.error("Video afspelen mislukt:", error)); 
             speak("Gefeliciteerd! Alle ingrediënten zijn gevonden. Hier is het recept. Smakelijk!");
         }
 
@@ -426,6 +483,10 @@
             document.querySelectorAll('.ingredient-img').forEach(img => {
                 img.classList.remove('found');
             });
+            
+            // Stop de video als je teruggaat naar start
+            recipeVideo.pause(); 
+            recipeVideo.currentTime = 0;
             
             // Toon startscherm
             searchScreen.style.display = 'none';
