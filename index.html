@@ -351,17 +351,26 @@
             const config = { fps: 10, qrbox: 250 }; // qrbox is de grootte van het 'zoekgebied'
             
             try {
-                await html5QrCode.start(
-                    { facingMode: "user" }, // Gebruikt de front-facing (selfie) camera
-                    config,
-                    onScanSuccess,
-                    (errorMessage) => { 
-                        // console.log("Scanning... No match yet."); 
-                    }
-                );
+                // 1. Zoek naar beschikbare video-apparaten
+                const videoDevices = await Html5Qrcode.getCameras();
+                
+                if (videoDevices && videoDevices.length) {
+                    // 2. We forceren het gebruik van de selfie camera ('user')
+                    await html5QrCode.start(
+                        { facingMode: "user" }, // Target: Selfie camera
+                        { fps: 10, qrbox: 250 },
+                        onScanSuccess,
+                        (errorMessage) => { 
+                            // console.log("Scanning...");
+                        }
+                    );
+                } else {
+                    searchHeader.textContent = "FOUT: Geen camera gevonden op dit apparaat.";
+                }
+    
             } catch (err) {
                 console.error("Kon de QR-scanner niet starten: ", err);
-                searchHeader.textContent = "FOUT: Camera Toegang Geweigerd of niet Beschikbaar.";
+                searchHeader.textContent = "FOUT: Camera Toegang Geweigerd of niet Beschikbaar. Controleer iOS instellingen.";
             }
         }
         
