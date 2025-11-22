@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             /* 100vh zorgt ervoor dat de pagina precies de hoogte van de viewport vult zonder te scrollen */
-            height: 100vh; 
+            height: 100vh;
             width: 100vw;
             overflow: hidden; /* Voorkomt scrollen */
             font-family: 'Arial', sans-serif;
@@ -150,40 +150,7 @@
             transform: scaleX(-1); /* Spiegelbeeld voor selfie-camera */
         }
 
-        #qr-code-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        #qr-code-overlay img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        #scan-button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
+        /* De #qr-code-overlay stijlen zijn verwijderd */
 
         /* Receptscherm */
         #recipe-screen {
@@ -290,12 +257,7 @@
                 <img id="large-ingredient-img" class="large-ingredient" src="" alt="Groot ingrediënt">
                 <video id="video-feed" autoplay playsinline></video>
                 
-                <div id="qr-code-overlay">
-                    <p>Houd de QR-code voor de camera</p>
-                    <img id="qr-code-img" src="" alt="QR Code">
-                    <button id="scan-button">Simuleer QR-scan</button>
                 </div>
-            </div>
 
             <div id="recipe-screen">
                 <h2>Het Recept</h2>
@@ -340,9 +302,7 @@
         const searchHeader = document.getElementById('search-text');
         const largeIngredientImg = document.getElementById('large-ingredient-img');
         const videoFeed = document.getElementById('video-feed');
-        const qrCodeOverlay = document.getElementById('qr-code-overlay');
-        const qrCodeImg = document.getElementById('qr-code-img');
-        const scanButton = document.getElementById('scan-button');
+        // qrCodeOverlay en scanButton zijn verwijderd uit de HTML en JS constanten
         const confettiOverlay = document.getElementById('confetti-overlay');
         const resetButton = document.getElementById('reset-button');
         
@@ -391,7 +351,7 @@
             startScreen.style.display = 'none';
             recipeScreen.style.display = 'none';
             searchScreen.style.display = 'flex';
-            qrCodeOverlay.style.display = 'none'; // Verberg de QR-overlay
+            // De regel om qrCodeOverlay te verbergen is nu onnodig
 
             const ingredient = ingredients[currentIngredientIndex];
 
@@ -403,20 +363,19 @@
             // Computer zegt de tekst
             speak(`Zoek dit ingrediënt: ${ingredient.name}`);
 
-            // Toon de QR-code met een kleine vertraging (simulatie van "scan")
-            setTimeout(() => {
-                qrCodeImg.src = ingredient.qr;
-                qrCodeOverlay.style.display = 'flex';
-            }, 3000); 
+            /*
+            * HIER ZOU DE LOGICA VOOR EEN ECHTE QR-SCANNER KOMEN:
+            * De scanner zou constant de videoFeed analyseren en, wanneer een 
+            * geldige code wordt gedetecteerd, de functie ingredientFound() aanroepen.
+            */
         }
 
         // Functie om het ingrediënt als 'gevonden' te markeren
         function ingredientFound() {
             const ingredient = ingredients[currentIngredientIndex];
             
-            // Verberg QR-code en stop de camera
-            qrCodeOverlay.style.display = 'none';
-            // stopCamera(); // Houd de camera aan om de QR-code te scannen
+            // Verberg QR-code (onze overlay is nu verwijderd, dus deze is onnodig)
+            // qrCodeOverlay.style.display = 'none';
 
             // 1. Groene rand
             const sideImg = document.getElementById(`img-${ingredient.name}`);
@@ -471,13 +430,15 @@
         startButton.addEventListener('click', startSearch);
         resetButton.addEventListener('click', resetGame);
         
-        // SIMULATIE VAN QR-SCAN
-        // In een echte applicatie zou dit event worden getriggerd door een werkende QR-scanner
-        scanButton.addEventListener('click', ingredientFound); 
+        // DE LIJN VOOR DE SIMULATIEKNOP IS VERWIJDERD:
+        // scanButton.addEventListener('click', ingredientFound); 
 
         // Start de applicatie in de reset-modus
         resetGame();
 
+        // **BELANGRIJK:** Omdat de simulatieknop nu weg is, moet u de functie 
+        // ingredientFound() handmatig aanroepen via de console (bijvoorbeeld) of 
+        // een echte QR-scanner-bibliotheek toevoegen om het spel te spelen.
     </script>
 </body>
 </html>
