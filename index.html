@@ -45,8 +45,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            /* AANPASSING 1: Padding verlaagd */
-            padding: 2px 5px; 
+            padding: 5px; 
         }
 
         .ingredient-img {
@@ -310,14 +309,14 @@
                             <li>Voeg de oesterzwammen toe en bak ze goudbruin.</li>
                             <li>Voeg de kruiden toe en serveer.</li>
                         </ol>
-                        <p style="font-size: 1.5em; text-align: center; width: 100%; color: #e74c3c; margin-top: 15px;">**Smakelijk!**</p>
+                        <p style="font-size: 1.5em; text-align: center; width: 100%; color: #e74c3c; margin-top: 15px;">Smakelijk!</p>
                     </div>
                     
                     <div class="recipe-right">
                         <video id="recipe-video" src="Zwamzakken_lied.mp4" controls autoplay loop>
                             Je browser ondersteunt de video tag niet.
                         </video>
-                        <button id="reset-button">Opnieuw Beginnen</button>
+                        <button id="reset-button">Opnieuw beginnen</button>
                     </div>
                 </div>
             </div>
@@ -471,7 +470,7 @@
             recipeScreen.style.display = 'flex';
             // Start de video wanneer het receptscherm verschijnt
             recipeVideo.play().catch(error => console.error("Video afspelen mislukt:", error)); 
-            speak("Gefeliciteerd! Alle ingrediënten zijn gevonden. Hier is het recept. Smakelijk!");
+            speak("Gefeliciteerd! Alle ingrediënten zijn gevonden. Hier is het recept. Smakelijk! Je kan ook nog deze video beluisteren!");
         }
 
         // Reset naar de startstatus
