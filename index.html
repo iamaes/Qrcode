@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Knapperige kabouterhapjes</title>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
     <style>
         /* Basisstijlen voor volledig scherm op iPad (10.2" Viewport is 810x1080 of 1080x810 CSS Pixels) */
         html, body {
@@ -33,7 +34,7 @@
             justify-content: space-around;
             align-items: center;
             padding: 10px 0;
-            background-color: #E5DCAF;
+            background-color: #e0e0e0;
         }
 
         .ingredient-item {
@@ -141,49 +142,21 @@
             margin-bottom: 30px;
         }
 
-        #video-feed {
-            width: 400px;
-            height: 300px;
-            background-color: black;
+        /* Container voor de QR-scanner/videofeed */
+        #scanner-container {
+            width: 400px; /* Aanpassen indien nodig */
+            height: 300px; /* Aanpassen indien nodig */
             border: 5px solid #ccc;
             border-radius: 10px;
+        }
+        /* Zorgt ervoor dat de video binnen de container past */
+        #scanner-container video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
             transform: scaleX(-1); /* Spiegelbeeld voor selfie-camera */
         }
 
-        #qr-code-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        #qr-code-overlay img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        #scan-button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
 
         /* Receptscherm */
         #recipe-screen {
@@ -278,23 +251,20 @@
 
         <div class="main-content">
             <div class="header">
+                <img src="champignon.png" alt="Champignon icoon">
                 <h1>Knapperige kabouterhapjes</h1>
             </div>
 
             <div id="start-screen">
-                <button id="start-button">START!</button>
+                <button id="start-button">Start het Kabouter Avontuur!</button>
             </div>
 
             <div id="search-screen" class="search-screen">
                 <h2 id="search-text">Zoek dit ingrediënt: OESTERZWAM</h2>
                 <img id="large-ingredient-img" class="large-ingredient" src="" alt="Groot ingrediënt">
-                <video id="video-feed" autoplay playsinline></video>
                 
-                <div id="qr-code-overlay">
-                    <p>Houd de QR-code voor de camera</p>
-                    <img id="qr-code-img" src="" alt="QR Code">
-                    <button id="scan-button">Simuleer QR-scan</button>
-                </div>
+                <div id="scanner-container"></div>
+                
             </div>
 
             <div id="recipe-screen">
@@ -324,14 +294,15 @@
 
     <script>
         const ingredients = [
-            { name: "oesterzwam", file: "oesterzwam.png", qr: "qr-oesterzwam.png" },
-            { name: "olijfolie", file: "olijfolie.png", qr: "qr-olijfolie.png" },
-            { name: "rozemarijn", file: "rozemarijn.png", qr: "qr-rozemarijn.png" },
-            { name: "tijm", file: "tijm.png", qr: "qr-tijm.png" }
+            // qrContent is de tekst die de QR-code moet bevatten om te matchen
+            { name: "oesterzwam", file: "oesterzwam.png", qrContent: "oesterzwam" }, 
+            { name: "olijfolie", file: "olijfolie.png", qrContent: "olijfolie" },
+            { name: "rozemarijn", file: "rozemarijn.png", qrContent: "rozemarijn" },
+            { name: "tijm", file: "tijm.png", qrContent: "tijm" }
         ];
 
         let currentIngredientIndex = 0;
-        let videoStream = null;
+        let html5QrCode = null; // Voor de QR-scanner
 
         const startScreen = document.getElementById('start-screen');
         const searchScreen = document.getElementById('search-screen');
@@ -339,59 +310,33 @@
         const startButton = document.getElementById('start-button');
         const searchHeader = document.getElementById('search-text');
         const largeIngredientImg = document.getElementById('large-ingredient-img');
-        const videoFeed = document.getElementById('video-feed');
-        const qrCodeOverlay = document.getElementById('qr-code-overlay');
-        const qrCodeImg = document.getElementById('qr-code-img');
-        const scanButton = document.getElementById('scan-button');
         const confettiOverlay = document.getElementById('confetti-overlay');
         const resetButton = document.getElementById('reset-button');
         
-        // Functie voor spraaksynthese
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'nl-NL'; 
-                window.speechSynthesis.speak(utterance);
-            } else {
-                console.warn('Speech Synthesis niet ondersteund in deze browser.');
-            }
-        }
+        // Initialiseer de QR-scanner (eenmalig)
+        document.addEventListener('DOMContentLoaded', () => {
+            // De scanner moet de video in de scanner-container plaatsen
+            html5QrCode = new Html5Qrcode("scanner-container");
+        });
 
-        // Camera initialiseren
-        async function initCamera() {
-            if (videoStream) return true; // Camera is al actief
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' } // 'user' voor de selfie camera
-                });
-                videoFeed.srcObject = stream;
-                videoStream = stream;
-                return true;
-            } catch (err) {
-                console.error("Fout bij toegang tot camera: ", err);
-                searchHeader.textContent = "Toegang tot de camera geweigerd. Start het avontuur opnieuw.";
-                return false;
+        // Functie die wordt aangeroepen wanneer een QR-code succesvol is gescand
+        function onScanSuccess(decodedText) {
+            const expectedContent = ingredients[currentIngredientIndex].qrContent;
+
+            if (decodedText.toLowerCase().trim() === expectedContent) {
+                // QR-code matcht! Stop de scanner en markeer gevonden.
+                stopScanner();
+                ingredientFound();
             }
-        }
-        
-        // Camera stoppen
-        function stopCamera() {
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-                videoStream = null;
-            }
+            // Anders: negeer de scan en blijf scannen
         }
 
         // Start het zoekproces voor het huidige ingrediënt
         async function startSearch() {
-            // Zorg ervoor dat de camera is geïnitialiseerd (eenmalige toestemming)
-            if (!(await initCamera())) return;
-
             // Verberg alle schermen behalve Zoekscherm
             startScreen.style.display = 'none';
             recipeScreen.style.display = 'none';
             searchScreen.style.display = 'flex';
-            qrCodeOverlay.style.display = 'none'; // Verberg de QR-overlay
 
             const ingredient = ingredients[currentIngredientIndex];
 
@@ -399,25 +344,42 @@
             searchHeader.textContent = `Zoek dit ingrediënt: ${ingredient.name.toUpperCase()}`;
             largeIngredientImg.src = ingredient.file;
             largeIngredientImg.alt = ingredient.name;
-            
-            // Computer zegt de tekst
-            speak(`Zoek dit ingrediënt: ${ingredient.name}`);
 
-            // Toon de QR-code met een kleine vertraging (simulatie van "scan")
-            setTimeout(() => {
-                qrCodeImg.src = ingredient.qr;
-                qrCodeOverlay.style.display = 'flex';
-            }, 3000); 
+            // Start de QR-scanner
+            // Gebruik 'environment' voor de achterste camera, maar 'user' voor de selfie camera
+            // Zoals gevraagd, gebruiken we de selfie camera ('user')
+            const config = { fps: 10, qrbox: 250 }; // qrbox is de grootte van het 'zoekgebied'
+            
+            try {
+                await html5QrCode.start(
+                    { facingMode: "user" }, // Gebruikt de front-facing (selfie) camera
+                    config,
+                    onScanSuccess,
+                    (errorMessage) => { 
+                        // console.log("Scanning... No match yet."); 
+                    }
+                );
+            } catch (err) {
+                console.error("Kon de QR-scanner niet starten: ", err);
+                searchHeader.textContent = "FOUT: Camera Toegang Geweigerd of niet Beschikbaar.";
+            }
+        }
+        
+        // Stopt de QR-scanner en dus ook de camera
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then((ignore) => {
+                    // Scanner is gestopt
+                }).catch((err) => {
+                    console.error("Fout bij stoppen scanner: ", err);
+                });
+            }
         }
 
         // Functie om het ingrediënt als 'gevonden' te markeren
         function ingredientFound() {
             const ingredient = ingredients[currentIngredientIndex];
             
-            // Verberg QR-code en stop de camera
-            qrCodeOverlay.style.display = 'none';
-            // stopCamera(); // Houd de camera aan om de QR-code te scannen
-
             // 1. Groene rand
             const sideImg = document.getElementById(`img-${ingredient.name}`);
             if (sideImg) {
@@ -445,15 +407,14 @@
 
         // Toon het receptscherm
         function showRecipe() {
-            stopCamera();
+            stopScanner();
             searchScreen.style.display = 'none';
             recipeScreen.style.display = 'flex';
-            speak("Gefeliciteerd! Alle ingrediënten zijn gevonden. Hier is het recept. Smakelijk!");
         }
 
         // Reset naar de startstatus
         function resetGame() {
-            stopCamera();
+            stopScanner();
             currentIngredientIndex = 0;
             
             // Reset zijbalkafbeeldingen
@@ -471,10 +432,6 @@
         startButton.addEventListener('click', startSearch);
         resetButton.addEventListener('click', resetGame);
         
-        // SIMULATIE VAN QR-SCAN
-        // In een echte applicatie zou dit event worden getriggerd door een werkende QR-scanner
-        scanButton.addEventListener('click', ingredientFound); 
-
         // Start de applicatie in de reset-modus
         resetGame();
 
